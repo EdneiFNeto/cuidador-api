@@ -1,6 +1,7 @@
 import Medicamento from "../models/Medicamento";
 import Paciente from "../models/Paciente";
 import db from "../../database";
+import admin from "../../auth/admin";
 
 class MedicamentoController {
   async index(req, res) {
@@ -60,15 +61,18 @@ class MedicamentoController {
   }
 
   async store(req, res) {
+    const error = false;
     const {
       prescricao,
       via_de_descricao,
       posologia,
       dosagem,
       pacientes,
+      token,
     } = req.body;
 
     const t = await db.connection.transaction();
+
     try {
       const medicamentos = await Medicamento.create(
         { prescricao, via_de_descricao, posologia, dosagem },
@@ -78,9 +82,34 @@ class MedicamentoController {
       if (pacientes.length > 0)
         await medicamentos.setPacientes(pacientes, { transaction: t });
 
-      await t.commit();
+      var message = {
+        data: {
+          body: "Novo medicamento adicionado",
+        },
+      };
+      var options = {
+        priority: "high",
+        timeToLive: 60 * 60 * 24,
+      };
 
-      return res.status(201).json(medicamentos);
+      admin
+        .messaging()
+        .sendToDevice(token, message, options)
+        .then((response) => {
+          error = true;
+          console.log("response", response);
+        })
+        .catch((error) => {
+          error = false;
+          console.log("error", error);
+        });
+
+      if (error) {
+        await t.commit();
+        return res.status(201).json(medicamentos);
+      }
+
+      return res.status(401).json({ error: "Falha ao enviar notificação" });
     } catch (error) {
       await t.rollback();
       return res.status(500).json({ error: `Error ${error}` });

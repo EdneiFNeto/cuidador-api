@@ -37,7 +37,7 @@ class CuidadorController {
   }
 
   async store(req, res) {
-    const { name, email, icon, status, pacientes } = req.body;
+    const { name, email, icon, status, pacientes, token } = req.body;
     const t = await db.connection.transaction();
 
     try {
