@@ -7,7 +7,7 @@ class CuidadorController {
   async index(req, res) {
     try {
       const cuidador = await Cuidador.findAll({
-        attributes: ["id", "name", "email", "status"],
+        attributes: ["id", "name", "email", "status", "google_id", "icon"],
         include: [
           {
             model: Paciente,
@@ -45,22 +45,16 @@ class CuidadorController {
 
   async store(req, res) {
     const { name, email, icon, status, google_id, usuarios  } = req.body;
-    const t = await db.connection.transaction();
-
     try {
+      
       const cuidador = await Cuidador.create(
-        { name, email, icon, status, google_id },
-        { transaction: t }
-      );
+        { name, email, icon, status, google_id });
 
-      if (usuarios.length > 0)
-        await cuidador.setUsuarios(usuarios, { transaction: t });
-
-      await t.commit();
+      if(usuarios.length > 0)
+        await cuidador.setUsuarios(usuarios);  
 
       return res.status(201).json(cuidador);
     } catch (error) {
-      await t.rollback();
       return res.status(500).json({ error: `Error ${error}` });
     }
   }
