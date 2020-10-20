@@ -1,6 +1,7 @@
 import Cuidador from "../models/Cuidador";
 import db from "../../database";
 import Paciente from "../models/Paciente";
+import Usuario from "../models/Usuario";
 
 class CuidadorController {
   async index(req, res) {
@@ -12,6 +13,12 @@ class CuidadorController {
             model: Paciente,
             as: "pacientes",
             attributes: ["id", "name", "idade", "peso"],
+            through: { attributes: [] },
+          },
+          {
+            model: Usuario,
+            as: "usuarios",
+            attributes: ["id", "name", "email", "icon", "token"],
             through: { attributes: [] },
           },
         ],
@@ -37,17 +44,17 @@ class CuidadorController {
   }
 
   async store(req, res) {
-    const { name, email, icon, status, pacientes, token } = req.body;
+    const { name, email, icon, status, google_id, usuarios  } = req.body;
     const t = await db.connection.transaction();
 
     try {
       const cuidador = await Cuidador.create(
-        { name, email, icon, status },
+        { name, email, icon, status, google_id },
         { transaction: t }
       );
 
-      if (pacientes.length > 0)
-        await cuidador.setPacientes(pacientes, { transaction: t });
+      if (usuarios.length > 0)
+        await cuidador.setUsuarios(usuarios, { transaction: t });
 
       await t.commit();
 
