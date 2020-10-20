@@ -43,7 +43,7 @@ class UsuarioController {
   }
 
   async store(req, res) {
-    const { name, email, icon, token, pacientes } = req.body;
+    const { name, email, icon, token } = req.body;
 
     const t = await db.connection.transaction();
     try {
@@ -51,8 +51,6 @@ class UsuarioController {
         { name, email, icon, token },
         { transaction: t }
       );
-
-      await user.setPacientes(pacientes, { transaction: t });
 
       await t.commit();
 
