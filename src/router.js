@@ -10,7 +10,7 @@ import MedicamentoController from "./app/controllers/MedicamentoController";
 routes.get("/usuarios", UsuarioController.index);
 routes.get("/usuarios/:id", UsuarioController.show);
 routes.post("/usuarios", UsuarioController.store);
-routes.put("/usuarios/:id", UsuarioController.update);
+routes.put("/usuarios/:email", UsuarioController.update);   
 
 /*Cuidador*/
 routes.get("/cuidadors", CuidadorController.index);

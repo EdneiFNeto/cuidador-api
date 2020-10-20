@@ -62,14 +62,14 @@ class UsuarioController {
   }
 
   async update(req, res) {
-    const { id } = req.params;
-    const { name, email, icon, token } = req.body;
+    const { email } = req.params;
+    const { name, icon, token } = req.body;
     const t = await db.connection.transaction();
 
     try {
-      const user = await Usuario.update(
+      await Usuario.update(
         { name, email, icon, token },
-        { where: { id } },
+        { where: { email } },
         {
           transaction: t,
         }
@@ -77,7 +77,7 @@ class UsuarioController {
 
       await t.commit();
 
-      return res.status(204).json(user);
+      return res.status(204).json();
     } catch (error) {
       await t.rollback();
       return res.json({ error: `Error ${error}` });
