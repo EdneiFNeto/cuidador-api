@@ -27,6 +27,11 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
+      google_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique:true
+      },
       created_at: {
         type: Sequelize.STRING,
         allowNull: false,

@@ -8,6 +8,7 @@ class Cuidador extends Model {
         email: Sequelize.STRING,
         icon: Sequelize.STRING,
         status: Sequelize.STRING,
+        google_id: Sequelize.STRING,
       },
       {
         tableName: "cuidadors",

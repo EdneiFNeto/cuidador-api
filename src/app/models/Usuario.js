@@ -8,6 +8,7 @@ class Usuario extends Model {
         email: Sequelize.STRING,
         icon: Sequelize.STRING,
         token: Sequelize.STRING,
+        google_id: Sequelize.STRING,
       },
       {
         tableName: "usuarios",

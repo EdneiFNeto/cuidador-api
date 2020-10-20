@@ -7,7 +7,7 @@ class UsuarioController {
   async index(req, res) {
     try {
       const user = await Usuario.findAll({
-        attributes: ["id", "name", "email", "icon", "token"],
+        attributes: ["id", "name", "email", "icon", "token", "google_id"],
         include: [
           {
             model: Paciente,
@@ -31,24 +31,26 @@ class UsuarioController {
 
   async show(req, res) {
     try {
-      const { id } = req.params;
-      const user = await Usuario.findByPk(id);
+      const { google_id } = req.params;
+      const user = await Usuario.findAll({ where: { google_id }});
 
-      if (!user) return res.status(404).json({ error: "Não existe usuário" });
+      if (user.length === 0){
+        return res.status(404).json({ error: "Não existe usuário" });
+      } 
 
-      return res.status(200).json(user);
+      return res.status(200).json(user[0]);
     } catch (error) {
       return res.status(500).json({ error: `Error ${error}` });
     }
   }
 
   async store(req, res) {
-    const { name, email, icon, token } = req.body;
+    const { name, email, icon, token, google_id } = req.body;
 
     const t = await db.connection.transaction();
     try {
       const user = await Usuario.create(
-        { name, email, icon, token },
+        { name, email, icon, token, google_id },
         { transaction: t }
       );
 
@@ -62,14 +64,14 @@ class UsuarioController {
   }
 
   async update(req, res) {
-    const { email } = req.params;
-    const { name, icon, token } = req.body;
+    const { google_id } = req.params;
+    const { name, icon, token, email } = req.body;
     const t = await db.connection.transaction();
 
     try {
       await Usuario.update(
         { name, email, icon, token },
-        { where: { email } },
+        { where: { google_id } },
         {
           transaction: t,
         }
