@@ -8,15 +8,15 @@ import MedicamentoController from "./app/controllers/MedicamentoController";
 
 /*Usuario */
 routes.get("/usuarios", UsuarioController.index);
-routes.get("/usuarios/:id", UsuarioController.show);
+routes.get("/usuarios/:google_id", UsuarioController.show);
 routes.post("/usuarios", UsuarioController.store);
-routes.put("/usuarios/:email", UsuarioController.update);   
+routes.put("/usuarios/:google_id", UsuarioController.update);   
 
 /*Cuidador*/
 routes.get("/cuidadors", CuidadorController.index);
-routes.get("/cuidadors/:id", CuidadorController.show);
+routes.get("/cuidadors/:google_id", CuidadorController.show);
 routes.post("/cuidadors", CuidadorController.store);
-routes.put("/cuidadors/:id", CuidadorController.update);
+routes.put("/cuidadors/:google_id", CuidadorController.update);
 
 /*Paciente*/
 routes.get("/pacientes", PacienteController.index);
