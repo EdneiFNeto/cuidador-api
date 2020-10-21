@@ -83,8 +83,14 @@ class CuidadorController {
       const cuidador = await Cuidador.create(
         { name, email, icon, status, google_id });
       
-      if(usuarios.length > 0)
-        await cuidador.setUsuarios(usuarios);
+      if(usuarios.length > 0){
+        let arrayUsers =[]
+        usuarios.forEach(element => {
+          arrayUsers.push(element.id)
+        });
+        
+        await cuidador.setUsuarios(arrayUsers);
+      }
         
       if(cuidador){
         const token = await Cuidador.findOne({ 

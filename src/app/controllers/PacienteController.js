@@ -83,8 +83,14 @@ class PacienteController {
         { transaction: t }
       );
 
-      if (usuarios.length > 0)
-        await paciente.setUsuarios(usuarios, { transaction: t });
+      if (usuarios.length > 0){
+        let arrayUsers = []
+        usuarios.forEach(element => {
+          arrayUsers.push(element.id)
+        });
+        
+        await paciente.setUsuarios(arrayUsers, { transaction: t });
+      }
 
       if (cuidadors.length > 0)
         await paciente.setCuidadors(cuidadors, { transaction: t });
