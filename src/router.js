@@ -10,7 +10,7 @@ import MedicamentoController from "./app/controllers/MedicamentoController";
 routes.get("/usuarios", UsuarioController.index);
 routes.get("/usuarios/:google_id", UsuarioController.show);
 routes.post("/usuarios", UsuarioController.store);
-routes.put("/usuarios/:google_id", UsuarioController.update);   
+routes.put("/usuarios/:google_id", UsuarioController.update);
 
 /*Cuidador*/
 routes.get("/cuidadors", CuidadorController.index);
@@ -20,7 +20,7 @@ routes.put("/cuidadors/:google_id", CuidadorController.update);
 
 /*Paciente*/
 routes.get("/pacientes", PacienteController.index);
-routes.get("/pacientes/:id", PacienteController.show);
+routes.get("/pacientes/:usuario_id", PacienteController.show);
 routes.post("/pacientes", PacienteController.store);
 routes.put("/pacientes/:id", PacienteController.update);
 

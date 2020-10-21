@@ -38,9 +38,8 @@ class PacienteController {
 
   async show(req, res) {
     try {
-      const { id } = req.params;
+      const { usuario_id } = req.params;
       const paciente = await Paciente.findOne({
-        where: { id },
         attributes: ["id", "name", "idade", "peso"],
         include: [
           {
@@ -48,6 +47,7 @@ class PacienteController {
             as: "usuarios",
             attributes: ["id", "name", "email"],
             through: { attributes: [] },
+            where: { id: usuario_id },
           },
           {
             model: Cuidador,
