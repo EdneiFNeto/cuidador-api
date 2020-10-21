@@ -34,6 +34,7 @@ class CuidadorController {
     try {
       const { usuario_id } = req.params;
       const cuidador = await Cuidador.findAll({
+        attributes: ["id", "name", "email", "status", "google_id", "icon"],
         include: [
           {
             model: Paciente,
