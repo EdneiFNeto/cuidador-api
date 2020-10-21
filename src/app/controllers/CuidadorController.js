@@ -2,6 +2,7 @@ import Cuidador from "../models/Cuidador";
 import db from "../../database";
 import Paciente from "../models/Paciente";
 import Usuario from "../models/Usuario";
+import notify from "../../util/notity";
 
 class CuidadorController {
   async index(req, res) {
@@ -45,14 +46,31 @@ class CuidadorController {
 
   async store(req, res) {
     const { name, email, icon, status, google_id, usuarios  } = req.body;
+
     try {
       
       const cuidador = await Cuidador.create(
         { name, email, icon, status, google_id });
-
+      
       if(usuarios.length > 0)
-        await cuidador.setUsuarios(usuarios);  
-
+        await cuidador.setUsuarios(usuarios);
+        
+      if(cuidador){
+        const token = await Cuidador.findOne({ 
+          where: cuidador.id,
+          include:[
+            {
+              model: Usuario,
+              as: "usuarios",
+              attributes: ["id", "name", "email", "icon", "token"],
+              through: { attributes: [] },
+            },
+          ] 
+        });
+        
+        notify(token.usuarios[0].token, "Cuidador aceitou o convite!")
+      }
+        
       return res.status(201).json(cuidador);
     } catch (error) {
       return res.status(500).json({ error: `Error ${error}` });
