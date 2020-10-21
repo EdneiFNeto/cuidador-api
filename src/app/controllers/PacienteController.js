@@ -13,7 +13,7 @@ class PacienteController {
           {
             model: Usuario,
             as: "usuarios",
-            attributes: ["id", "name", "email"],
+            attributes: ["id", "name", "email", "icon", "token", "google_id"],
             through: { attributes: [] },
           },
           {
@@ -33,6 +33,31 @@ class PacienteController {
       return res.status(200).json(paciente);
     } catch (error) {
       return res.json({ error: `Error ${error}` });
+    }
+  }
+
+  async create(req, res) {
+    try {
+      const { google_id } = req.params;
+      const paciente = await Paciente.findAll({
+        attributes: ["id", "name", "idade", "peso"],
+        include: [
+          {
+            model: Usuario,
+            as: "usuarios",
+            attributes: ["id", "name", "email", "icon", "token", "google_id"],
+            through: { attributes: [] },
+            where: { google_id: google_id}
+          },
+        ]
+      });
+
+      if (!paciente)
+        return res.status(404).json({ error: "Não existe usuário" });
+
+      return res.status(200).json(paciente);
+    } catch (error) {
+      return res.status(500).json({ error: `Error ${error}` });
     }
   }
 

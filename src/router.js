@@ -22,6 +22,7 @@ routes.put("/cuidadors/:google_id", CuidadorController.update);
 /*Paciente*/
 routes.get("/pacientes", PacienteController.index);
 routes.get("/pacientes/:usuario_id", PacienteController.show);
+routes.get("/pacientes/create/:google_id", PacienteController.create);
 routes.post("/pacientes", PacienteController.store);
 routes.put("/pacientes/:id", PacienteController.update);
 
