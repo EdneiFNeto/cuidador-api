@@ -15,7 +15,7 @@ routes.put("/usuarios/:google_id", UsuarioController.update);
 /*Cuidador*/
 routes.get("/cuidadors", CuidadorController.index);
 routes.get("/cuidadors/:google_id", CuidadorController.show);
-routes.get("/cuidadors/create/:usuario_id", CuidadorController.create);
+routes.get("/cuidadors/create/:google_id", CuidadorController.create);
 routes.post("/cuidadors", CuidadorController.store);
 routes.put("/cuidadors/:google_id", CuidadorController.update);
 

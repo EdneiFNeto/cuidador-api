@@ -32,7 +32,7 @@ class CuidadorController {
 
   async create(req, res) {
     try {
-      const { usuario_id } = req.params;
+      const { google_id } = req.params;
       const cuidador = await Cuidador.findAll({
         attributes: ["id", "name", "email", "status", "google_id", "icon"],
         include: [
@@ -47,7 +47,7 @@ class CuidadorController {
             as: "usuarios",
             attributes: ["id", "name", "email", "icon", "token"],
             through: { attributes: [] },
-            where: { id: usuario_id}
+            where: { google_id: google_id}
           },
         ]
       });
