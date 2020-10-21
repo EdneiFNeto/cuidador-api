@@ -1,7 +1,8 @@
 import Medicamento from "../models/Medicamento";
 import Paciente from "../models/Paciente";
+import Usuario from "../models/Usuario";
 import db from "../../database";
-import admin from "../../auth/admin";
+import notify from "../../util/notity";
 
 class MedicamentoController {
   async index(req, res) {
@@ -61,57 +62,53 @@ class MedicamentoController {
   }
 
   async store(req, res) {
-    const error = false;
     const {
       prescricao,
       via_de_descricao,
       posologia,
       dosagem,
       pacientes,
-      token,
     } = req.body;
 
-    const t = await db.connection.transaction();
-
     try {
+      
       const medicamentos = await Medicamento.create(
-        { prescricao, via_de_descricao, posologia, dosagem },
-        { transaction: t }
-      );
+        { prescricao, via_de_descricao, posologia, dosagem });
 
       if (pacientes.length > 0)
-        await medicamentos.setPacientes(pacientes, { transaction: t });
+        await medicamentos.setPacientes(pacientes);
+        
+      const p = await Medicamento.findOne({ 
+        where: medicamentos.id,
+        include: [
+          {
+            model: Paciente,
+            as: "pacientes",
+            attributes: ["id", "name", "idade", "peso"],
+            through: { attributes: [] },
+          },
+        ] 
+      });
 
-      var message = {
-        data: {
-          body: "Novo medicamento adicionado",
-        },
-      };
-      var options = {
-        priority: "high",
-        timeToLive: 60 * 60 * 24,
-      };
+      const usuario = await Usuario.findOne({
+        attributes:["id", "name", "email", "token"],
+        include: [
+          {
+            model: Paciente,
+            as: "pacientes",
+            attributes: ["id", "name", "idade", "peso"],
+            through: { attributes: [] },
+            where: { id: p.pacientes[0].id }
+          }
+        ]
+      })
 
-      admin
-        .messaging()
-        .sendToDevice(token, message, options)
-        .then((response) => {
-          error = true;
-          console.log("response", response);
-        })
-        .catch((error) => {
-          error = false;
-          console.log("error", error);
-        });
-
-      if (error) {
-        await t.commit();
-        return res.status(201).json(medicamentos);
+      if(usuario){
+        notify(usuario.token, "Um novo medicamento foi adicionado.")
       }
 
-      return res.status(401).json({ error: "Falha ao enviar notificação" });
+      return res.status(201).json(medicamentos);
     } catch (error) {
-      await t.rollback();
       return res.status(500).json({ error: `Error ${error}` });
     }
   }
