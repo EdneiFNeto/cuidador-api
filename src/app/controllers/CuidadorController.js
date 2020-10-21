@@ -30,6 +30,36 @@ class CuidadorController {
     }
   }
 
+  async create(req, res) {
+    try {
+      const { usuario_id } = req.params;
+      const cuidador = await Cuidador.findAll({
+        include: [
+          {
+            model: Paciente,
+            as: "pacientes",
+            attributes: ["id", "name", "idade", "peso"],
+            through: { attributes: [] },
+          },
+          {
+            model: Usuario,
+            as: "usuarios",
+            attributes: ["id", "name", "email", "icon", "token"],
+            through: { attributes: [] },
+            where: { id: usuario_id}
+          },
+        ]
+      });
+
+      if (!cuidador)
+        return res.status(404).json({ error: "Não existe usuário" });
+
+      return res.status(200).json(cuidador);
+    } catch (error) {
+      return res.status(500).json({ error: `Error ${error}` });
+    }
+  }
+
   async show(req, res) {
     try {
       const { id } = req.params;
